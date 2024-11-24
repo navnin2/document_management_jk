@@ -28,7 +28,6 @@ export class AuthController {
       if (!!body.session_id) {
         owner['sessionId'] = body.session_id;
       }
-      console.log(owner)
       const token = req.headers?.authorization;
       await this.authService.clearSession(owner, token);
       return 'Logout'
