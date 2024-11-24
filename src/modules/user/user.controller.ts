@@ -42,6 +42,7 @@ export class UserController {
    * @returns 
    */
   @Get(':uid')
+  @UseGuards(AuthGuard)
   findOne(@Param('uid') uid: string) {
     return this.userService.findOne(uid);
   }
@@ -53,6 +54,7 @@ export class UserController {
    * @returns 
    */
   @Put(':uid')
+  @UseGuards(AuthGuard)
   update(@Param('uid') uid: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(uid, updateUserDto);
   }
@@ -63,6 +65,7 @@ export class UserController {
    * @returns 
    */
   @Delete(':uid')
+  @UseGuards(AuthGuard)
   remove(@Param('uid') uid: string) {
     return this.userService.remove(uid);
   }
