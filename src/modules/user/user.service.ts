@@ -22,7 +22,6 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    console.log(465, createUserDto)
     try {
       return await this.userModel.create(createUserDto);
     } catch (err) {

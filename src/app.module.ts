@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -7,12 +7,16 @@ import { UserModule } from './modules/user/user.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { RoleModule } from './modules/role/role.module';
 import { IngestionModule } from './modules/ingestion/ingestion.module';
-import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './modules/auth/jwt/jwt-auth.guard';
-import { RolesGuard } from './modules/auth/roles.guard';
+import { SeederModule } from './seed/seeder.module';
+import { SeederService } from './seed/seeder.service';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Role } from './modules/role/entities/role.entity';
+import { AuthModule } from './modules/auth/auth.module';
+import { AuthGuard } from './modules/auth/auth.guard';
+import { LoginLog } from './modules/auth/entity/loginlog.entity';
+import { User } from './modules/user/entities/user.entity';
+import { RolesGuard } from './modules/auth/role.guard';
 
 @Module({
   imports: [
@@ -24,16 +28,27 @@ import { Role } from './modules/role/entities/role.entity';
     DocumentsModule,
     RoleModule,
     IngestionModule,
+    SeederModule,
     AuthModule,
-    SequelizeModule.forFeature([Role])
+    SequelizeModule.forFeature([LoginLog, User, Role]),
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
       useClass: RolesGuard,
     },
-  ]
+  ],
 })
-export class AppModule { }
+export class AppModule implements OnApplicationBootstrap {
+  constructor(private readonly seederService: SeederService) {}
+
+  async onApplicationBootstrap() {
+    await this.seederService.seedRoles();
+  }
+}

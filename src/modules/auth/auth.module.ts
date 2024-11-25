@@ -1,28 +1,21 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { UserModule } from '../user/user.module';
-import { AuthService } from './auth.service';
-import { CachingModule } from 'src/config/caching/caching.module';
 import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { LoginLog } from './entities/login-log.entity';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { Role } from '../role/entities/role.entity';
+import { LoginLog } from './entity/loginlog.entity';
+import { User } from '../user/entities/user.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([LoginLog, Role]),
-    ConfigModule,
-    UserModule,
-    CachingModule,
+    SequelizeModule.forFeature([LoginLog, User]),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRE },
+      signOptions: { expiresIn: '24h' },
     }),
   ],
-  providers: [AuthService, JwtService],
   controllers: [AuthController],
-  exports: [AuthService],
+  providers: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

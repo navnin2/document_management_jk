@@ -1,75 +1,98 @@
-import { Injectable } from '@nestjs/common';
-import { randomBytes } from 'crypto';
-import * as moment from 'moment-timezone';
-import { Op } from 'sequelize';
-import { User } from '../user/entities/user.entity';
-import { UserService } from '../user/user.service';
-import { OwnerDto } from 'src/config/decorater/sql/owner.decorator';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { LoginLog } from './entities/login-log.entity';
-import { JwtModuleOptions, JwtService } from '@nestjs/jwt';
-import { error } from 'console';
-import { ConfigService } from '@nestjs/config';
-import { CachingService } from 'src/config/caching/caching.service';
-
-export interface AuthResponse {
-    error?: any;
-    user?: User;
-}
+import { User } from '../user/entities/user.entity';
+import { compareHash, uuid } from 'src/config/core.helper';
+import { LoginLog } from './entity/loginlog.entity';
+import { randomBytes } from 'crypto';
+import { JwtService } from '@nestjs/jwt/dist/jwt.service';
+import * as moment from 'moment';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        @InjectModel(LoginLog) private readonly loginModel: typeof LoginLog,
-        private jwt: JwtService,
-        private config: ConfigService,
-        private _cache: CachingService,
-    ) { }
+  constructor(
+    @InjectModel(User) private readonly userModel: typeof User,
+    @InjectModel(LoginLog) private readonly loginModel: typeof LoginLog,
+    private jwt: JwtService,
+  ) {}
 
-    async createSession(owner: OwnerDto, info: any): Promise<any> {
-        try {
-            const refreshToken = randomBytes(40).toString('hex');
-            const log = await this.loginModel.create({
-                token: refreshToken,
-                token_expiry: moment().add(process.env.JWT_EXPIRE, 'seconds'),
-                user_id: owner.id,
-                info,
-            });
-            if (!log) return { error };
-            const token = this.jwt.sign({ user_id: log.user_id, }, {
-                secret: process.env.JWT_SECRET,
-            });
-            const tokenExpiry = moment().add(process.env.JWT_EXPIRE, 'seconds');
+  async signIn(username: string, pass: string): Promise<any> {
+    const user = await this.userModel.findOne({
+      where: {
+        email: username,
+      },
+      attributes: ['password', 'full_name', 'email', 'role_id', 'id'],
+    });
 
-            return {
-                error: false,
-                data: {
-                    token,
-                    token_expiry: tokenExpiry,
-                    refresh_token: refreshToken,
-                    user: owner,
-                    session_id: log.uid,
-                },
-            };
-        } catch (error) {
-            return { error };
-        }
+    if (!(await compareHash(`${pass}`, user.password))) {
+      console.log(8787);
+      throw new UnauthorizedException();
     }
+    const { password, ...result } = user.dataValues;
+    try {
+      const refreshToken = randomBytes(40).toString('hex');
+      const log = await this.loginModel.count({
+        where: {
+          user_id: result.id,
+        },
+      });
+      let loginLog;
+      const logBody = {
+        token: refreshToken,
+        token_expiry: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
+        user_id: result.id,
+        login_at: new Date(),
+        active: true,
+      };
+      if (log > 0) {
+        const [affectedCount, updatedLogin] = await this.loginModel.update(
+          logBody,
+          { where: { user_id: result.id }, returning: true },
+        );
 
+        loginLog = updatedLogin[0];
+      } else {
+        loginLog = await this.loginModel.create(logBody);
+      }
 
+      const token = await this.jwt.signAsync(
+        { user_id: result.id, date: new Date(), role_id: result.role_id },
+        {
+          secret: process.env.JWT_SECRET,
+        },
+      );
+      const tokenExpiry = moment().add(process.env.JWT_EXPIRE, 'seconds');
 
-    async clearSession(owner: OwnerDto, token: string) {
-        const { exp, sessionId } = owner;
-        console.log(exp, sessionId)
-        await this.loginModel.update({ logout_at: moment().toDate(), active: false }, { where: { uid: sessionId }, returning: true });
-
-        const authExp = new Date(exp * 1000);
-        authExp.setHours(23, 59, 59, 999);
-        const authRedisExpiry = authExp.getTime() - new Date().getTime();
-        await this._cache.addToBlackList({
-            expireAt: Math.floor(authRedisExpiry),
-            token,
-            sessionId,
-        });
+      return {
+        error: false,
+        data: {
+          token,
+          token_expiry: tokenExpiry,
+          refresh_token: refreshToken,
+          user: result,
+          session_id: loginLog.uid,
+        },
+      };
+    } catch (error) {
+      return { error };
     }
+  }
+
+  async clearSession(body) {
+    console.log(body.session_id);
+    const [updateCount, data] = await this.loginModel.update(
+      { logout_at: moment().toDate(), active: false },
+      { where: { uid: body.session_id }, returning: true },
+    );
+
+    if (updateCount > 0) {
+      return true;
+    } else {
+      throw new UnauthorizedException();
+    }
+  }
 }

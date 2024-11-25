@@ -1,39 +1,38 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
-import { Request, Response } from 'express';
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Owner, OwnerDto } from 'src/config/decorater/sql/owner.decorator';
-import { LogoutDto } from './logout.dto';
+import { LocalAuthDto } from './dto/localAuth.dto';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { LogoutDto } from './dto/logout.dto';
+import { Public } from 'src/config/decorater/public.decorater';
 
-@ApiTags('auth')
 @Controller('auth')
+@ApiBearerAuth()
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
-  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @Post('login')
+  @Public()
+  signIn(@Body() signInDto: LocalAuthDto) {
+    return this.authService.signIn(signInDto.username, signInDto.password);
+  }
+
   @ApiOperation({ summary: 'Logout and clear session' })
   @Post('logout')
-  async logout(
-    @Req() req: Request,
-    @Owner() owner: OwnerDto,
-    @Body() body: LogoutDto,
-  ) {
-
+  async logout(@Body() body: LogoutDto) {
     try {
-      if (!!body.session_id) {
-        owner['sessionId'] = body.session_id;
-      }
-      const token = req.headers?.authorization;
-      await this.authService.clearSession(owner, token);
-      return 'Logout'
+      await this.authService.clearSession(body);
+      return 'Logout';
     } catch (err) {
-      console.log(err)
-      return err
+      console.log(err);
+      return err;
     }
   }
 }
