@@ -11,6 +11,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/jwt/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/roles.guard';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { Role } from './modules/role/entities/role.entity';
 
 @Module({
   imports: [
@@ -22,7 +24,8 @@ import { RolesGuard } from './modules/auth/roles.guard';
     DocumentsModule,
     RoleModule,
     IngestionModule,
-    AuthModule
+    AuthModule,
+    SequelizeModule.forFeature([Role])
   ],
   controllers: [AppController],
   providers: [

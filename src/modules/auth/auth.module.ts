@@ -7,10 +7,11 @@ import { AuthController } from './auth.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { LoginLog } from './entities/login-log.entity';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { Role } from '../role/entities/role.entity';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([LoginLog]),
+    SequelizeModule.forFeature([LoginLog, Role]),
     ConfigModule,
     UserModule,
     CachingModule,
