@@ -43,7 +43,7 @@ export class RoleController {
    * @returns
    */
   @Get()
-  @Roles(RolesEnum.Editer)
+  @Roles(RolesEnum.Admin)
   findAll(@Query() query: PaginationDto) {
     return this.roleService.findAll(query);
   }
