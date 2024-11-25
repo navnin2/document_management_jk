@@ -5,6 +5,7 @@ import { setupSwagger } from './config/swagger';
 import { ConfigService } from '@nestjs/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { GlobalResponseInterceptor } from './config/globel.intesepter';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 
 async function bootstrap() {
@@ -26,5 +27,15 @@ async function bootstrap() {
     `Server running on http://localhost:${configService.get('PORT')}/api-documentation in ${configService.get('VERSION')} mode`,
     'Bootstrap',
   );
+
+  const microserviceApp = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://localhost:5672'], // RabbitMQ URL
+      queue: 'python_intrgration', // Queue name
+    },
+  });
+
+  await microserviceApp.listen();
 }
 bootstrap();

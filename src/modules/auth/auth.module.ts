@@ -6,7 +6,7 @@ import { CachingModule } from 'src/config/caching/caching.module';
 import { AuthController } from './auth.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { LoginLog } from './entities/login-log.entity';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -14,6 +14,11 @@ import { JwtService } from '@nestjs/jwt';
     ConfigModule,
     UserModule,
     CachingModule,
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.JWT_EXPIRE },
+    }),
   ],
   providers: [AuthService, JwtService],
   controllers: [AuthController],

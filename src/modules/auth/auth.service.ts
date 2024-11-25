@@ -28,11 +28,10 @@ export class AuthService {
 
     async createSession(owner: OwnerDto, info: any): Promise<any> {
         try {
-            console.log(owner)
             const refreshToken = randomBytes(40).toString('hex');
             const log = await this.loginModel.create({
                 token: refreshToken,
-                token_expiry: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
+                token_expiry: moment().add(process.env.JWT_EXPIRE, 'seconds'),
                 user_id: owner.id,
                 info,
             });
