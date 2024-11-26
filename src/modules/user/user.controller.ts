@@ -22,11 +22,13 @@ import {
 import { User } from './entities/user.entity';
 import { PaginationDto } from 'src/config/condition.dto';
 import { Public } from 'src/config/decorater/public.decorater';
+import { Roles } from 'src/config/decorater/roles.decorator';
+import { RolesEnum } from './role.enum';
 
 @ApiBearerAuth()
 @ApiTags('user')
 @ApiExtraModels(User)
-@Controller('users')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -48,6 +50,7 @@ export class UserController {
    * @returns
    */
   @Get()
+  @Roles(RolesEnum.Admin) //only admin can get the list of users
   findAll(@Query() query: PaginationDto) {
     return this.userService.findAll(query);
   }

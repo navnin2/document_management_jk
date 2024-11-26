@@ -4,14 +4,21 @@ import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { PaginationDto } from 'src/config/condition.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { FileUploadService } from 'src/config/aws-s3/s3.service';
 import { diskStorage } from 'multer';
 
 @Controller('documents')
+@ApiBearerAuth()
 export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService, private readonly s3service: FileUploadService) { }
 
+  /**
+   * post apii call to uplaod the doc to s3 and store to our databse
+   * @param file 
+   * @param body 
+   * @returns 
+   */
   @Post('')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -33,21 +40,42 @@ export class DocumentsController {
     return await this.documentsService.create(body, imageData)
   }
 
+  /**
+   * find all docs 
+   * @param query 
+   * @returns 
+   */
   @Get()
   findAll(@Query() query: PaginationDto) {
     return this.documentsService.findAll(query);
   }
 
+  /**
+   * get each doc details using uid
+   * @param uid 
+   * @returns 
+   */
   @Get(':uid')
   findOne(@Param('uid') uid: string) {
     return this.documentsService.findOne(uid);
   }
 
+  /**
+   * update the doc details
+   * @param uid 
+   * @param updateDocumentDto 
+   * @returns 
+   */
   @Put(':uid')
   update(@Param('uid') uid: string, @Body() updateDocumentDto: UpdateDocumentDto) {
     return this.documentsService.update(uid, updateDocumentDto);
   }
 
+  /**
+   * delete the doc from db
+   * @param uid 
+   * @returns 
+   */
   @Delete(':uid')
   remove(@Param('uid') uid: string) {
     return this.documentsService.remove(uid);

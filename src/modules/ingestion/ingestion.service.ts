@@ -11,6 +11,8 @@ export class IngestionService {
     const body = {
       status: data.status
     }
+    //update teh status that recived from python code to our db
+    //it can be any data i just mention the status only based on the requrement it can be changed
     const [affectedCount, updatedRole] = await this.ingestionModel.update(body, { where: { uid: data.uid }, returning: true });
     if (!affectedCount) {
       throw new HttpException('Banner not found', 404);

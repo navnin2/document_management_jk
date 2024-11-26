@@ -1,8 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 import { BeforeCreate, Column, Model, Table } from "sequelize-typescript";
-import { uuid } from "src/config/core.helper";
+import { uuid } from '../../../config/core.helper';
 
+/**
+ * table structe that store the doc file
+ */
 @Table
 export class Document extends Model{
     @Column({ unique: true })

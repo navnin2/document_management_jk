@@ -10,6 +10,9 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+/**
+ * set global intersepter to modify the response data
+ */
 @Injectable()
 export class GlobalResponseInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {

@@ -1,13 +1,4 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Document Management of jkTech</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+<p align="center">A progressive <a href="http://nodejs.org" target="_blank">Document Management of jkTech</p>
 
 ## Description
 
@@ -44,7 +35,19 @@ $ npm run start:prod
 4. then select teh role id and then craete the user with full_name , email, password amd role_id.
 5. after success response you can login with that user email as username and password.
 
+## Test Case
+
+1. test case hase been defined in the test directory
+2. run the bellow comment to run the test .
+```bash
+npm run test:e2e
+```
+
+## swagger 
+swagger is add for API documentation
+
 ## Stay in touch
 
-- Author - Navaneeth [https://www.linkedin.com/in/navaneeth-nodejs-developer/], Email: navneethnnair220@gmail.com
+- Author - Navaneeth [https://www.linkedin.com/in/navaneeth-nodejs-developer/], 
+- Email: navneethnnair220@gmail.com
 

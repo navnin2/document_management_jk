@@ -4,6 +4,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 
 const logger: Logger = new Logger('QueryLog');
 
+/**
+ * configeration of the database
+ */
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -17,7 +20,7 @@ const logger: Logger = new Logger('QueryLog');
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        autoLoadModels: true,
+        autoLoadModels: true, //load the model each time
         logging: (sql: string) =>
           process.env.DATABASE_LOGGING === 'Y' ? logger.log(sql) : false, // make true when we need to see the SQL query while buildinga and calling API
         synchronize: true, // Be cautious about using synchronize in production

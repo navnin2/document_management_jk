@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 import { BeforeCreate, Column, Model, Table } from "sequelize-typescript";
-import { uuid } from "src/config/core.helper";
+import { uuid } from '../../../config/core.helper';
 
 @Table
 export class Ingestion extends Model {

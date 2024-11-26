@@ -8,6 +8,12 @@ import { Role } from './entities/role.entity';
 export class RoleService {
   constructor(@InjectModel(Role) private readonly roleModel: typeof Role,
   ) { }
+
+  /**
+   * function to crarte the role
+   * @param createRoleDto 
+   * @returns 
+   */
   async create(createRoleDto): Promise<Role> {
     try {
       return await this.roleModel.create(createRoleDto)
@@ -18,9 +24,14 @@ export class RoleService {
 
   }
 
+  /**
+   * function to get all role in DB
+   * @param query 
+   * @returns 
+   */
   async findAll(query): Promise<object> {
     const data = await this.roleModel.findAndCountAll({
-      limit: query.limit ? query.limit : -1,
+      limit: query.limit ? query.limit : null,
       offset: query.offset ? query.offset : 0,
       order: query.sort ? query.sort : [['createdAt', 'desc']]
     });
@@ -29,6 +40,11 @@ export class RoleService {
   }
 
 
+  /**
+   * function to get specific role based on Uid
+   * @param uid 
+   * @returns 
+   */
   async findOne(uid: string): Promise<Role> {
     const data = await this.roleModel.findOne({
       where: {
@@ -38,6 +54,12 @@ export class RoleService {
     return data
   }
 
+  /**
+   * update function to update role 
+   * @param uid 
+   * @param body 
+   * @returns 
+   */
   async update(uid, body): Promise<Role[]> {
     const [affectedCount, updatedRole] = await this.roleModel.update(body, { where: { uid }, returning: true });
     if (!affectedCount) {
@@ -46,6 +68,11 @@ export class RoleService {
     return updatedRole
   }
 
+  /**
+   * function tom delete the role
+   * @param uid 
+   * @returns 
+   */
   async remove(uid: string): Promise<number> {
     const deletedRowsCount = await this.roleModel.destroy({ where: { uid }, });
     return deletedRowsCount;

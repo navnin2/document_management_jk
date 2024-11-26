@@ -32,7 +32,7 @@ export class RoleController {
    * @returns
    */
   @Post()
-  @Roles(RolesEnum.Admin)
+  @Roles(RolesEnum.Admin) //admin privilage user can only craete role
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.create(createRoleDto);
   }
@@ -43,7 +43,6 @@ export class RoleController {
    * @returns
    */
   @Get()
-  @Roles(RolesEnum.Admin)
   findAll(@Query() query: PaginationDto) {
     return this.roleService.findAll(query);
   }
@@ -54,7 +53,7 @@ export class RoleController {
    * @returns
    */
   @Get(':uid')
-  @Roles(RolesEnum.Admin)
+  @Roles(RolesEnum.Admin) //admin privilage user can only craete role
   findOne(@Param('uid') uid: string) {
     return this.roleService.findOne(uid);
   }
@@ -66,7 +65,7 @@ export class RoleController {
    * @returns
    */
   @Put(':uid')
-  @Roles(RolesEnum.Admin)
+  @Roles(RolesEnum.Admin) //admin privilage user can only craete role
   update(@Param('uid') uid: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.roleService.update(uid, updateRoleDto);
   }
@@ -77,7 +76,7 @@ export class RoleController {
    * @returns
    */
   @Delete(':uid')
-  @Roles(RolesEnum.Admin)
+  @Roles(RolesEnum.Admin) //admin privilage user can only craete role
   remove(@Param('uid') uid: string) {
     return this.roleService.remove(uid);
   }

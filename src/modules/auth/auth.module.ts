@@ -8,7 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([LoginLog, User]),
+    SequelizeModule.forFeature([LoginLog, User]), //import user and loginlog entity
+    //jwt comfig reiger here
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,

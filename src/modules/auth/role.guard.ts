@@ -5,6 +5,9 @@ import { Role } from '../role/entities/role.entity';
 import { ROLES_KEY } from 'src/config/decorater/roles.decorator';
 import { RolesEnum } from '../user/role.enum';
 
+/**
+ * function to check the role is currect as defined for specific api
+ */
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
@@ -13,10 +16,13 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    //chekc the role as per the role decorater
     const requiredRoles = this.reflector.getAllAndOverride<RolesEnum[]>(
       ROLES_KEY,
       [context.getHandler(), context.getClass()],
     );
+
+    //check is the reqres role is that user have 
     if (!requiredRoles) {
       return true;
     }

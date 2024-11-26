@@ -2,6 +2,10 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
 
+/**
+ * swagger setup to config the api documentation
+ * @param app 
+ */
 export const setupSwagger = (app: INestApplication) => {
 
   const configService = app.get(ConfigService);

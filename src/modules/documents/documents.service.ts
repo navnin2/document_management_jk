@@ -9,6 +9,13 @@ export class DocumentsService {
     @InjectModel(Document) private readonly documentModel: typeof Document,
     @InjectModel(Ingestion) private readonly ingestionModel: typeof Ingestion
   ) { }
+
+  /**
+   * post the doc to db
+   * @param body 
+   * @param imageData 
+   * @returns 
+   */
   async create(body, imageData): Promise<Document> {
     let ingestion;
     const payload = {
@@ -55,9 +62,14 @@ export class DocumentsService {
   }
 
 
+  /**
+   * function to findALL api
+   * @param query \
+   * @returns 
+   */
   async findAll(query): Promise<object> {
     const data = await this.documentModel.findAndCountAll({
-      limit: query.limit ? query.limit : -1,
+      limit: query.limit ? query.limit : null,
       offset: query.offset ? query.offset : 0,
       order: query.sort ? query.sort : [['createdAt', 'desc']]
     });
@@ -66,6 +78,11 @@ export class DocumentsService {
   }
 
 
+  /**
+   * function to get the details of one doc
+   * @param uid 
+   * @returns 
+   */
   async findOne(uid: string): Promise<Document> {
     const data = await this.documentModel.findOne({
       where: {
@@ -75,6 +92,12 @@ export class DocumentsService {
     return data
   }
 
+  /**
+   * update and return the updated data
+   * @param uid 
+   * @param body 
+   * @returns 
+   */
   async update(uid, body): Promise<Document[]> {
     const [affectedCount, updatedRole] = await this.documentModel.update(body, { where: { uid }, returning: true });
     if (!affectedCount) {
@@ -83,6 +106,11 @@ export class DocumentsService {
     return updatedRole
   }
 
+  /**
+   * delete the data from the DB
+   * @param uid 
+   * @returns 
+   */
   async remove(uid: string): Promise<number> {
     const deletedRowsCount = await this.documentModel.destroy({ where: { uid }, });
     return deletedRowsCount;
