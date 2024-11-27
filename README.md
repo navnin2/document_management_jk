@@ -42,6 +42,8 @@ $ npm run start:prod
 ```bash
 npm run test:e2e
 ```
+3. the logout is commented as the remoaing function need authorixation
+4. athe documenet uplaod also comment as the path need to be correct
 
 ## swagger 
 swagger is add for API documentation
