@@ -28,14 +28,14 @@ async function bootstrap() {
     'Bootstrap',
   );
 
-  // const microserviceApp = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-  //   transport: Transport.RMQ,
-  //   options: {
-  //     urls: ['amqp://localhost:5672'], // RabbitMQ URL
-  //     queue: 'python_intrgration', // Queue name
-  //   },
-  // });
+  const microserviceApp = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://localhost:5672'], // RabbitMQ URL
+      queue: 'python_intrgration', // Queue name
+    },
+  });
 
-  // await microserviceApp.listen();
+  await microserviceApp.listen();
 }
 bootstrap();
