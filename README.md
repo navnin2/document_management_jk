@@ -45,6 +45,13 @@ npm run test:e2e
 3. the logout is commented as the remoaing function need authorixation
 4. athe documenet uplaod also comment as the path need to be correct
 
+## microservice
+
+1. brocker used is microservice is Rabbit MQ
+2. the queue name is defined as python_intrgration
+3. lstening to this and run the status update function of ingestions
+
+
 ## swagger 
 swagger is add for API documentation
 
