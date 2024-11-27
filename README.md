@@ -1,4 +1,4 @@
-<p align="center">A progressive <a href="http://nodejs.org" target="_blank">Document Management of jkTech</p>
+<p align="center"> Document Management of jkTech</p>
 
 ## Description
 
