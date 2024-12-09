@@ -63,7 +63,7 @@ export class RoleService {
   async update(uid, body): Promise<Role[]> {
     const [affectedCount, updatedRole] = await this.roleModel.update(body, { where: { uid }, returning: true });
     if (!affectedCount) {
-      throw new HttpException('Banner not found', 404);
+      throw new HttpException('role not found', 404);
     }
     return updatedRole
   }

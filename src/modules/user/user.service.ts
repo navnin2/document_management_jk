@@ -22,7 +22,7 @@ export class UserService {
     });
   
     if (exists) {
-      throw new HttpException(`User already exists`, HttpStatus.BAD_REQUEST); //if smae is there in db then throe error
+      throw new HttpException(`User already exists`, HttpStatus.BAD_REQUEST); //if smae email is there in db then throe error
     }
     try {
       return await this.userModel.create(createUserDto);
@@ -33,7 +33,7 @@ export class UserService {
   }
 
   /**
-   * dunction find all user in db
+   * function find all user in db
    * @param query 
    * @returns 
    */
@@ -73,7 +73,7 @@ export class UserService {
       returning: true,
     });
     if (!affectedCount) {
-      throw new HttpException('Banner not found', 404);
+      throw new HttpException('User not found', 404);
     }
     return updatedRole;
   }

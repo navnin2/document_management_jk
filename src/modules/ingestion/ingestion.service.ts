@@ -15,7 +15,7 @@ export class IngestionService {
     //it can be any data i just mention the status only based on the requrement it can be changed
     const [affectedCount, updatedRole] = await this.ingestionModel.update(body, { where: { uid: data.uid }, returning: true });
     if (!affectedCount) {
-      throw new HttpException('Banner not found', 404);
+      throw new HttpException('ingestion not found', 404);
     }
   }
 }
